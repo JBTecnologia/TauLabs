@@ -144,6 +144,8 @@ bool CopterControl::setInputOnPort(enum InputType type, int port_num)
         break;
     case INPUT_TYPE_PPM:
         settings.RcvrPort = HwCopterControl::RCVRPORT_PPM;
+        settings.MainPort = HwCopterControl::MAINPORT_TELEMETRY;
+        settings.FlexiPort = HwCopterControl::FLEXIPORT_DISABLED;
         break;
     case INPUT_TYPE_SBUS:
         settings.MainPort = HwCopterControl::MAINPORT_SBUS;

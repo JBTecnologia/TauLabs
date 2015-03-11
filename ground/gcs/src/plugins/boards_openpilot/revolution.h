@@ -28,7 +28,7 @@
 #ifndef REVOLUTION_H
 #define REVOLUTION_H
 
-#include <coreplugin/iboardtype.h>
+#include <iboardtype.h>
 
 class IBoardType;
 

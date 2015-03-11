@@ -15,6 +15,7 @@ include(coreplugin_dependencies.pri)
 INCLUDEPATH *= dialogs \
     uavgadgetmanager \
     actionmanager
+INCLUDEPATH *=../../../../../build/ground/gcs
 DEPENDPATH += dialogs \
     uavgadgetmanager \
     actionmanager

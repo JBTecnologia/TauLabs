@@ -31,7 +31,7 @@ dmg: standalone package_flight package_matlab
 gcs: uavobjects_gcs
 	$(V1) $(MAKE) -C $(ROOT_DIR) GCS_BUILD_CONF=release $@
 
-slimgcsgcs: uavobjects_gcs
+slimgcs: uavobjects_gcs
 	$(V1) $(MAKE) -C $(ROOT_DIR) GCS_BUILD_CONF=release $@
 	
 ground_package: | dmg

@@ -634,7 +634,7 @@ quint32 DFUObject::CRCFromQBArray(QByteArray array, quint32 Size)
         array.append( QByteArray(pad, 255) );
     }
 
-    int maxSize = (array.length() > Size) ? Size : array.length();
+    int maxSize = (array.length() > (int)Size) ? Size : array.length();
     // Large firmwares require defining super large arrays,
     // so better to malloc them. I did run into stack overflows here
     // with devices with large firmwares (1MB) (E. Lafargue), hence

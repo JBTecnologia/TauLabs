@@ -71,8 +71,9 @@ void TBSSplashDialog::setText(QString text, bool waiting)
     }
 }
 
-void TBSSplashDialog::setup(TBSSplashDialog::DialogType type, int button, QString text, bool waitingText, TBSSplashDialog::Buttons autoCountDown, int buttonStartTime)
+void TBSSplashDialog::setup(TBSSplashDialog::DialogType type, int button, QString text, bool waitingText, TBSSplashDialog::Buttons autoCountDown, int buttonStartTime, QObject *obj, bool showDontShow)
 {
+    currentObject = obj;
     QMovie *movie;
     switch (type) {
     case TYPE_ERROR:
@@ -91,18 +92,24 @@ void TBSSplashDialog::setup(TBSSplashDialog::DialogType type, int button, QStrin
     default:
         break;
     }
-    setup(movie, button, text, waitingText, autoCountDown, buttonStartTime);
+    setup(movie, button, text, waitingText, autoCountDown, buttonStartTime, obj, showDontShow);
 }
 
-void TBSSplashDialog::setup(QMovie *movie, int button, QString text, bool waitingText, TBSSplashDialog::Buttons autoCountDown, int buttonStartTime)
+void TBSSplashDialog::setup(QMovie *movie, int button, QString text, bool waitingText, TBSSplashDialog::Buttons autoCountDown, int buttonStartTime, QObject *obj, bool showDontShow)
 {
+    ui->checkBox->setChecked(false);
+    ui->checkBox->setVisible(showDontShow);
+    currentObject = obj;
     setSplashMovie(movie);
     setButtons(button, autoCountDown, buttonStartTime);
     setText(text, waitingText);
 }
 
-void TBSSplashDialog::setup(QPixmap *image, int button, QString text, bool waitingText, TBSSplashDialog::Buttons autoCountDown, int buttonStartTime)
+void TBSSplashDialog::setup(QPixmap *image, int button, QString text, bool waitingText, TBSSplashDialog::Buttons autoCountDown, int buttonStartTime, QObject *obj, bool showDontShow)
 {
+    ui->checkBox->setChecked(false);
+    ui->checkBox->setVisible(showDontShow);
+    currentObject = obj;
     setImage(image);
     setButtons(button, autoCountDown, buttonStartTime);
     setText(text, waitingText);
@@ -116,6 +123,11 @@ void TBSSplashDialog::setCustomButton0Text(QString text)
 void TBSSplashDialog::setCustomButton1Text(QString text)
 {
     ui->button1->setText(text);
+}
+
+void TBSSplashDialog::updateText(QString text)
+{
+    ui->text->setText(text);
 }
 
 void TBSSplashDialog::setButtons(int button, Buttons buttonAutoClick, int buttonCountDown)
@@ -226,19 +238,30 @@ void TBSSplashDialog::onButtonClicked()
     if(!button)
         return;
     if(button == ui->button0) {
-        if(currentButtons & BUTTONS_CUSTOM0)
-            emit custom0Clicked();
-        else
-            emit okClicked();
+        if(currentButtons & BUTTONS_CUSTOM0) {
+            lastButtonClicked = BUTTONS_CUSTOM0;
+            emit custom0Clicked(currentObject);
+        }
+        else {
+            lastButtonClicked = BUTTONS_OK;
+            emit okClicked(currentObject);
+        }
     }
     else if(button == ui->button1) {
-        if(currentButtons & BUTTONS_CUSTOM1)
-            emit custom1Clicked();
-        else
-            emit cancelClicked();
+        if(currentButtons & BUTTONS_CUSTOM1) {
+            lastButtonClicked = BUTTONS_CUSTOM1;
+            emit custom1Clicked(currentObject);
+        }
+        else {
+            lastButtonClicked = BUTTONS_CANCEL;
+            if(ui->checkBox->isChecked())
+                lastButtonClicked = (TBSSplashDialog::Buttons)(DONT_SHOW_AGAIN + BUTTONS_CANCEL);
+            emit cancelClicked(currentObject);
+        }
     }
     else if(button == ui->button2) {
-             emit nextClicked();
+            lastButtonClicked = BUTTONS_NEXT;
+            emit nextClicked(currentObject);
     }
 }
 

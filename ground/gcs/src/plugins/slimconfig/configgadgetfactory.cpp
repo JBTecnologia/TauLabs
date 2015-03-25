@@ -81,8 +81,8 @@ ConfigGadgetFactory::ConfigGadgetFactory(QObject *parent) :
     connect(mainWidget, SIGNAL(configStartRequested()), this, SLOT(onConfigStartRequested()));
     connect(mainWidget, SIGNAL(configCancelRequested()), this, SLOT(onConfigCancelRequested()));
     connect(mainWidget, SIGNAL(configNextRequested()), this, SLOT(onConfigNextRequested()));
-    connect(dialog, SIGNAL(okClicked()), this, SLOT(onDialogOkClicked()));
-    connect(dialog, SIGNAL(cancelClicked()), this, SLOT(onDialogCancelClicked()));
+    connect(dialog, SIGNAL(okClicked(QObject*)), this, SLOT(onDialogOkClicked(QObject*)));
+    connect(dialog, SIGNAL(cancelClicked(QObject*)), this, SLOT(onDialogCancelClicked(QObject*)));
     connect(&timeout, SIGNAL(timeout()), this, SLOT(onTimeout()));
     connect(m_manualControlSettings, SIGNAL(objectUpdated(UAVObject*)), this, SLOT(onManualControlSettingsChanged()));
     connect(m_manualControlCommand, SIGNAL(objectUpdated(UAVObject*)), this, SLOT(onManualControlCommandChanged()));
@@ -150,13 +150,15 @@ void ConfigGadgetFactory::onReceiverTypeChanged(int value)
     utilMngr->saveObjectToFlash(hwObject);
     board->getInputOnPort(0);
     delay(500);
-    dialog->setup(TBSSplashDialog::TYPE_QUESTION, TBSSplashDialog::BUTTONS_OK | TBSSplashDialog::BUTTONS_CANCEL, "Reboot board to apply new settings?", false, TBSSplashDialog::BUTTONS_OK, 5);
+    dialog->setup(TBSSplashDialog::TYPE_QUESTION, TBSSplashDialog::BUTTONS_OK | TBSSplashDialog::BUTTONS_CANCEL, "Reboot board to apply new settings?", false, TBSSplashDialog::BUTTONS_OK, 5, this);
     dialog->show();
     currentStatus = STATUS_DIALOG_REBOOT;
 }
 
-void ConfigGadgetFactory::onDialogOkClicked()
+void ConfigGadgetFactory::onDialogOkClicked(QObject *sender)
 {
+    if(sender != this)
+        return;
     dialog->close();
     if(currentStatus == STATUS_DIALOG_REBOOT) {
         currentStatus = STATUS_REBOOTING;
@@ -171,8 +173,10 @@ void ConfigGadgetFactory::onDialogOkClicked()
     }
 }
 
-void ConfigGadgetFactory::onDialogCancelClicked()
+void ConfigGadgetFactory::onDialogCancelClicked(QObject *sender)
 {
+    if(sender != this)
+        return;
     dialog->close();
     if(currentStatus == STATUS_DIALOG_REBOOT) {
         currentStatus = STATUS_IDLE;
@@ -187,13 +191,13 @@ void ConfigGadgetFactory::onTimeout()
 {
     if(currentStatus == STATUS_REBOOTING) {
         currentStatus = STATUS_IDLE;
-        dialog->setup(TBSSplashDialog::TYPE_ERROR, TBSSplashDialog::BUTTONS_OK, "Board failed to reboot, try to remove power and USB and reinsert USB", false, TBSSplashDialog::BUTTONS_OK, 5);
+        dialog->setup(TBSSplashDialog::TYPE_ERROR, TBSSplashDialog::BUTTONS_OK, "Board failed to reboot, try to remove power and USB and reinsert USB", false, TBSSplashDialog::BUTTONS_OK, 5, this);
     }
 }
 
 void ConfigGadgetFactory::onRebootMessage(QString text)
 {
-    dialog->setup(TBSSplashDialog::TYPE_WAIT, TBSSplashDialog::BUTTONS_NO_BUTTONS, text, true, TBSSplashDialog::BUTTONS_NO_BUTTONS);
+    dialog->setup(TBSSplashDialog::TYPE_WAIT, TBSSplashDialog::BUTTONS_NO_BUTTONS, text, true, TBSSplashDialog::BUTTONS_NO_BUTTONS, 0, this);
     dialog->show();
 }
 
@@ -387,7 +391,7 @@ void ConfigGadgetFactory::onConfigNextRequested()
         deadBand.start(5000);
         mainWidget->disableNext(true);
         deadBandValue = 0;//TODO ADD MUTEX
-        dialog->setup(TBSSplashDialog::TYPE_WAIT, TBSSplashDialog::BUTTONS_NO_BUTTONS, "Please wait while deadband is being calculated", true, TBSSplashDialog::BUTTONS_NO_BUTTONS);
+        dialog->setup(TBSSplashDialog::TYPE_WAIT, TBSSplashDialog::BUTTONS_NO_BUTTONS, "Please wait while deadband is being calculated", true, TBSSplashDialog::BUTTONS_NO_BUTTONS, 0, this);
         dialog->show();
         return;
     }
@@ -785,7 +789,7 @@ void ConfigGadgetFactory::setRcStep(ConfigGadgetFactory::rc_config_steps step)
     case RC_DEADBAND_QUESTION:
         generalText = QString("Input Calibration ended!");
         mainWidget->setStepText(generalText);
-        dialog->setup(TBSSplashDialog::TYPE_QUESTION, TBSSplashDialog::BUTTONS_OK | TBSSplashDialog::BUTTONS_CANCEL, "The input configuration ended, do you want to proceed with deadband detection?", false, TBSSplashDialog::BUTTONS_OK, 5);
+        dialog->setup(TBSSplashDialog::TYPE_QUESTION, TBSSplashDialog::BUTTONS_OK | TBSSplashDialog::BUTTONS_CANCEL, "The input configuration ended, do you want to proceed with deadband detection?", false, TBSSplashDialog::BUTTONS_OK, 5, this);
         dialog->show();
         break;
     case RC_DEADBAND_CALCULATE:
@@ -797,7 +801,7 @@ void ConfigGadgetFactory::setRcStep(ConfigGadgetFactory::rc_config_steps step)
         currentRcStep = RC_WELCOME;
         restoreMdata();
         mainWidget->setDone(MainWidget::CHANNEL_ALL, false);
-        dialog->setup(TBSSplashDialog::TYPE_WAIT, TBSSplashDialog::BUTTONS_OK, "RC Configuration done!", false, TBSSplashDialog::BUTTONS_OK, 5);
+        dialog->setup(TBSSplashDialog::TYPE_WAIT, TBSSplashDialog::BUTTONS_OK, "RC Configuration done!", false, TBSSplashDialog::BUTTONS_OK, 5, this);
         dialog->show();
         break;
     default:

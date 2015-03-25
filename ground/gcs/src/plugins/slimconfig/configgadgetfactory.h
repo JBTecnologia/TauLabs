@@ -67,8 +67,8 @@ private slots:
     void boardConnected();
     void boardDisconnected();
     void onReceiverTypeChanged(int);
-    void onDialogOkClicked();
-    void onDialogCancelClicked();
+    void onDialogOkClicked(QObject*);
+    void onDialogCancelClicked(QObject*);
     void onTimeout();
     void onRebootMessage(QString text);
     void onManualControlSettingsChanged();

@@ -48,7 +48,8 @@ public:
         BUTTONS_CANCEL =    0b00000010,
         BUTTONS_NEXT =      0b00000100,
         BUTTONS_CUSTOM0 =   0b00001000,
-        BUTTONS_CUSTOM1 =   0b00010000
+        BUTTONS_CUSTOM1 =   0b00010000,
+        DONT_SHOW_AGAIN =   0b00100000
     };
     enum DialogType {
         TYPE_WAIT,
@@ -62,12 +63,15 @@ public:
     void setSplashMovie(QMovie *movie);
     void setImage(QPixmap *image);
     void setText(QString text, bool waiting);
-    void setup(DialogType type, int button, QString text, bool waitingText, Buttons autoCountDown, int buttonStartTime = 0);
-    void setup(QMovie *movie, int button, QString text, bool waitingText,Buttons autoCountDown, int buttonStartTime = 0);
-    void setup(QPixmap *image, int button, QString text, bool waitingText, Buttons autoCountDown, int buttonStartTime = 0);
+    void setup(DialogType type, int button, QString text, bool waitingText, Buttons autoCountDown, int buttonStartTime = 0, QObject *obj = NULL, bool showDontShow = false);
+    void setup(QMovie *movie, int button, QString text, bool waitingText,Buttons autoCountDown, int buttonStartTime = 0, QObject *obj = NULL, bool showDontShow = false);
+    void setup(QPixmap *image, int button, QString text, bool waitingText, Buttons autoCountDown, int buttonStartTime = 0, QObject *obj = NULL, bool showDontShow = false);
     void setCustomButton0Text(QString text);
     void setCustomButton1Text(QString text);
+    Buttons getLastButtonClicked(){return lastButtonClicked;}
+    void updateText(QString text);
 private:
+    Buttons lastButtonClicked;
     Ui::TBSSplashScreen *ui;
     QString tempText;
     QString tempButtonText;
@@ -78,16 +82,17 @@ private:
     int m_buttonCountDown;
     QPushButton *currentTimedButton;
     int currentButtons;
+    QObject *currentObject;
 private slots:
     void onWaitTextTimerTimeout();
     void onButtonClicked();
     void onButtonTimerTimeout();
 signals:
-    void okClicked();
-    void cancelClicked();
-    void nextClicked();
-    void custom0Clicked();
-    void custom1Clicked();
+    void okClicked(QObject *);
+    void cancelClicked(QObject *);
+    void nextClicked(QObject *);
+    void custom0Clicked(QObject *);
+    void custom1Clicked(QObject *);
 };
 
 #endif // TBSSPLASHSCREEN_H

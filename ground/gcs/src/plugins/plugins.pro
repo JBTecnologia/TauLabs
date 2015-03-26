@@ -415,7 +415,6 @@ plugin_slimconfig.depends += plugin_uavobjectutil
 plugin_slimconfig.depends += plugin_uavobjectwidgetutils
 plugin_slimconfig.depends += plugin_uavsettingsimportexport
 SUBDIRS += plugin_slimconfig
-}
 
 # Updater Plugin
 plugin_updater.subdir = updater
@@ -423,7 +422,7 @@ plugin_updater.depends = plugin_coreplugin
 plugin_updater.depends += plugin_uavtalk
 plugin_updater.depends += plugin_uavobjectutil
 SUBDIRS += plugin_updater
-
+}
 SLIM_GCS {
 INCLUDEPATH+=./slimcoreplugin
 }

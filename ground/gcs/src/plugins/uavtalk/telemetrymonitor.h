@@ -42,6 +42,7 @@
 #include "telemetry.h"
 #include "sessionmanaging.h"
 #include "generalsettings.h"
+#include "coreplugin.h"
 #include <extensionsystem/pluginmanager.h>
 
 class TelemetryMonitor : public QObject

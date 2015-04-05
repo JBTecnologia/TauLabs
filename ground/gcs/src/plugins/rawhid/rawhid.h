@@ -41,6 +41,8 @@
 #include "usbmonitor.h"
 #include "usbdevice.h"
 
+#include <QDebug>
+
 //helper classes
 class RawHIDReadThread;
 class RawHIDWriteThread;

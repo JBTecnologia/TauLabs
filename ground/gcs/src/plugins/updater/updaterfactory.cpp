@@ -31,7 +31,6 @@
 // for menu item
 #include "gcsversioninfo.h"
 #include <coreconstants.h>
-#include <actionmanager/actionmanager.h>
 #include <icore.h>
 #include <QUrl>
 #include <QDebug>

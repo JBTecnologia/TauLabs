@@ -30,7 +30,6 @@
 
 #include "QWidget"
 #include "mainwindow.h"
-#include "generalsettings.h"
 #include <slimcoreplugin/iconnection.h>
 #include <QtCore/QVector>
 #include <QtCore/QIODevice>

@@ -28,23 +28,15 @@
  */
 
 #include "mainwindow.h"
-#include "actioncontainer.h"
-#include "actionmanager_p.h"
 #include "basemode.h"
 #include "connectionmanager.h"
 #include "boardmanager.h"
 #include "coreimpl.h"
 #include "coreconstants.h"
 #include "utils/mytabwidget.h"
-#include "generalsettings.h"
 #include "messagemanager.h"
-#include "modemanager.h"
 #include "mimedatabase.h"
 #include "plugindialog.h"
-#include "shortcutsettings.h"
-#include "uavgadgetmanager.h"
-#include "uavgadgetinstancemanager.h"
-#include "workspacesettings.h"
 #include "globalmessaging.h"
 #include "authorsdialog.h"
 #include "baseview.h"
@@ -53,8 +45,6 @@
 #include "iconfigurableplugin.h"
 #include <QStyleFactory>
 #include "manhattanstyle.h"
-#include "rightpane.h"
-#include "settingsdialog.h"
 #include "threadmanager.h"
 #include "uniqueidmanager.h"
 #include "variablemanager.h"
@@ -62,7 +52,6 @@
 
 #include <slimcoreplugin/settingsdatabase.h>
 #include <extensionsystem/pluginmanager.h>
-#include "dialogs/iwizard.h"
 #include <utils/hostosinfo.h>
 #include <utils/pathchooser.h>
 #include <utils/stylehelper.h>
@@ -80,7 +69,6 @@
 #include <QPixmap>
 #include <QMessageBox>
 #include <QDesktopServices>
-#include "dialogs/importsettings.h"
 #include <QDesktopWidget>
 #include <QPainter>
 #include <QBitmap>
@@ -162,14 +150,6 @@ MainWindow::~MainWindow()
 	hide();
 
     ExtensionSystem::PluginManager *pm = ExtensionSystem::PluginManager::instance();
-    if (m_uavGadgetManagers.count() > 0) {
-        foreach (UAVGadgetManager *mode, m_uavGadgetManagers)
-        {
-            pm->removeObject(mode);
-            delete mode;
-        }
-    }    delete m_uniqueIDManager;
-    m_uniqueIDManager = 0;
 
     pm->removeObject(m_coreImpl);
     delete m_coreImpl;
@@ -218,11 +198,7 @@ bool MainWindow::showOptionsDialog(const QString &category,
                                    const QString &page,
                                    QWidget *parent)
 {
-    emit m_coreImpl->optionsDialogRequested();
-    if (!parent)
-        parent = this;
-    SettingsDialog dlg(parent, category, page);
-    return dlg.execDialog();
+    return false;
 }
 
 void MainWindow::showHelp()
@@ -270,19 +246,6 @@ void MainWindow::changeEvent(QEvent *e)
 void MainWindow::shutdown()
 {
 
-}
-
-inline int takeLeastPriorityUavGadgetManager(const QList<Core::UAVGadgetManager*> m_uavGadgetManagers) {
-    int index = 0;
-    int prio = m_uavGadgetManagers.at(0)->priority();
-    for (int i = 0; i < m_uavGadgetManagers.count(); i++) {
-        int prio2 = m_uavGadgetManagers.at(i)->priority();
-        if (prio2 < prio) {
-            prio = prio2;
-            index = i;
-        }
-    }
-    return index;
 }
 
 void MainWindow::aboutTauLabsGCS()

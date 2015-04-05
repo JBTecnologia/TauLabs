@@ -30,7 +30,6 @@
 #include <extensionsystem/iplugin.h>
 #include <icore.h>
 #include <coreconstants.h>
-#include <actionmanager/actionmanager.h>
 #include "uavtalk/telemetrymanager.h"
 #include "objectpersistence.h"
 

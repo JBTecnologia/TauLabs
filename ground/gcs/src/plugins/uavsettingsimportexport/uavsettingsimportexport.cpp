@@ -34,7 +34,6 @@
 #include "importsummary.h"
 // for menu item
 #include <coreconstants.h>
-#include <actionmanager/actionmanager.h>
 #include <icore.h>
 #include <QKeySequence>
 
